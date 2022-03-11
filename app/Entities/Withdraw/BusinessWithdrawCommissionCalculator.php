@@ -7,14 +7,15 @@ use App\Entities\Operation;
 
 class BusinessWithdrawCommissionCalculator implements CommissionCalculatorInterface
 {
+    private $operation;
 
     public function __construct(Operation $operation)
     {
+        $this->operation = $operation;
     }
 
     public function calculate(): float
     {
-        return 6;
-        // TODO: Implement calculate() method.
+        return $this->operation->amount * 0.005;
     }
 }

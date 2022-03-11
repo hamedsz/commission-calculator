@@ -16,6 +16,6 @@ class NormalDepositCommissionCalculator implements CommissionCalculatorInterface
 
     public function calculate() : float
     {
-        return 22; //TODO
+        return $this->operation->amount * 0.0003; //TODO
     }
 }

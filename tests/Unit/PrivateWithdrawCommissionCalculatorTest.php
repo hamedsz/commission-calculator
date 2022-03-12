@@ -2,10 +2,12 @@
 
 namespace Tests\Unit;
 
+use App\Entities\FreeCommissionUsageStore;
 use App\Entities\Operation;
 use App\Entities\Withdraw\BusinessWithdrawCommissionCalculator;
 use App\Entities\Withdraw\PrivateWithdrawCommissionCalculator;
-use PHPUnit\Framework\TestCase;
+use App\Helpers\Euro;
+use Tests\TestCase;
 
 class PrivateWithdrawCommissionCalculatorTest extends TestCase
 {
@@ -18,36 +20,11 @@ class PrivateWithdrawCommissionCalculatorTest extends TestCase
         $item->amount = 3000000;
         $item->date = "2016-02-19";
         $item->currency = "JPY";
+        $item->userID = 1;
         $data[] = [
-            'operation' => $item,
-            'result'    => 8612
-        ];
-
-        $item = new Operation();
-        $item->amount = 300.00;
-        $item->date = "2016-02-15";
-        $item->currency = "EUR";
-        $data[] = [
-            'operation' => $item,
-            'result'    => 0.00
-        ];
-
-        $item = new Operation();
-        $item->amount = 1000.00;
-        $item->date = "2016-01-10";
-        $item->currency = "EUR";
-        $data[] = [
-            'operation' => $item,
-            'result'    => 0.00
-        ];
-
-        $item = new Operation();
-        $item->amount = 100.00;
-        $item->date = "2016-01-10";
-        $item->currency = "EUR";
-        $data[] = [
-            'operation' => $item,
-            'result'    => 3.00
+            'operation'     => $item,
+            'result'        => 8607.390069,
+            'currency_rate' => 130.869977
         ];
 
         return $data;
@@ -60,12 +37,16 @@ class PrivateWithdrawCommissionCalculatorTest extends TestCase
      */
     public function test_is_returns_correct_data()
     {
+        $store = new FreeCommissionUsageStore();
         $data = $this->getData();
 
         foreach ($data as $item){
-            $obj = new PrivateWithdrawCommissionCalculator($item['operation']);
+            $obj = new PrivateWithdrawCommissionCalculator($item['operation'], $store);
 
-            $this->assertTrue($obj->calculate() === $item['result']);
+            //this code converts results to date currency rate because maybe they changed
+            $amount = $item['result'] * Euro::getRate($item['operation']->currency) / $item['currency_rate'];
+
+            $this->assertEquals($amount, $obj->calculate());
         }
     }
 }

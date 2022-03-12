@@ -10,19 +10,21 @@ class CommissionCalculator
     /** @var OperationCalculator */
     private $operationCalculator;
     private $operation;
+    private $freeCommissionUsageStore;
 
-    public function __construct(Operation $operation)
+    public function __construct(Operation $operation, FreeCommissionUsageStore $store)
     {
         $this->operation = $operation;
+        $this->freeCommissionUsageStore = $store;
     }
 
     private function initialize(){
         switch ($this->operation->type){
             case "deposit":
-                $this->operationCalculator = new DepositOperation($this->operation);
+                $this->operationCalculator = new DepositOperation($this->operation, $this->freeCommissionUsageStore);
                 break;
             case "withdraw":
-                $this->operationCalculator = new WithdrawOperation($this->operation);
+                $this->operationCalculator = new WithdrawOperation($this->operation, $this->freeCommissionUsageStore);
                 break;
             default:
                 throw new \Exception("unexpected operation type! supported types: deposit, withdraw");

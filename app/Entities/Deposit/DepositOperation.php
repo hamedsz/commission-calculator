@@ -3,6 +3,7 @@
 namespace App\Entities\Deposit;
 
 use App\Entities\CommissionCalculatorInterface;
+use App\Entities\FreeCommissionUsageStore;
 use App\Entities\Operation;
 use App\Entities\OperationCalculator;
 
@@ -12,7 +13,7 @@ class DepositOperation implements OperationCalculator
     private $calculator;
     private $operation;
 
-    public function __construct(Operation $operation)
+    public function __construct(Operation $operation, FreeCommissionUsageStore $freeCommissionUsageStore)
     {
         $this->operation = $operation;
     }

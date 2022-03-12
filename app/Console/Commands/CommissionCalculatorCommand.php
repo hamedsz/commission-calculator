@@ -2,7 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Entities\FreeCommissionUsage;
+use App\Entities\FreeCommissionUsageStore;
 use App\Entities\Operation;
+use App\Helpers\Euro;
 use Illuminate\Console\Command;
 
 class CommissionCalculatorCommand extends Command
@@ -38,10 +41,16 @@ class CommissionCalculatorCommand extends Command
      */
     public function handle()
     {
+        $store = new FreeCommissionUsageStore();
+
         $operation = new Operation();
         $operation->type = "withdraw";
         $operation->userType = "private";
-        $calc = new \App\Entities\CommissionCalculator($operation);
+        $operation->userID = 5;
+        $operation->date = "2016-02-19";
+        $operation->amount = 3000000;
+        $operation->currency = "JPY";
+        $calc = new \App\Entities\CommissionCalculator($operation, $store);
 
         $commission = $calc->main();
 

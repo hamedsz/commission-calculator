@@ -3,18 +3,81 @@
 namespace App\Entities\Withdraw;
 
 use App\Entities\CommissionCalculatorInterface;
+use App\Entities\FreeCommissionUsage;
+use App\Entities\FreeCommissionUsageStore;
 use App\Entities\Operation;
+use App\Helpers\Euro;
 
 class PrivateWithdrawCommissionCalculator implements CommissionCalculatorInterface
 {
+    private $operation;
+    private $freeCommissionUsageStore;
 
-    public function __construct(Operation $operation)
+    const SUM_ALLOWANCE = 1000;
+    const COUNT_ALLOWANCE = 3;
+
+    public function __construct(Operation $operation, FreeCommissionUsageStore $freeCommissionUsageStore)
     {
+        $this->operation = $operation;
+        $this->freeCommissionUsageStore = $freeCommissionUsageStore;
+    }
+
+    private function getSumUsage(){
+        return $this->freeCommissionUsageStore
+            ->getUserUsageInWeek($this->operation->userID, $this->operation->date)
+            ->sum('amount');
+    }
+    private function getCountUsage(){
+        return $this->freeCommissionUsageStore
+            ->getUserUsageInWeek($this->operation->userID, $this->operation->date)
+            ->count();
+    }
+
+    private function isCountOfFreeUsagesMoreThanAllowance(){
+        return $this->getCountUsage() > self::COUNT_ALLOWANCE;
+    }
+    private function isSumOfFreeUsagesMoreThanAllowance(){
+        return $this->getSumUsage() >= self::SUM_ALLOWANCE;
+    }
+    private function isSumOfFreeUsagesAndOperationAmountMoreThanAllowance(){
+        return $this->getSumUsage() + $this->getOperationAmountInEuros() <= self::SUM_ALLOWANCE;
+    }
+
+    private function getOperationAmountInEuros(){
+        return Euro::convert($this->operation->amount, $this->operation->currency);
+    }
+
+    private function convertEuroToCurrentCurrency($amount){
+        return Euro::convertFromEuroTo($amount, $this->operation->currency);
+    }
+
+    private function insertFreeCommissionUsage($amount){
+        $usage = new FreeCommissionUsage();
+        $usage->id = $this->operation->userID;
+        $usage->date = $this->operation->date;
+        $usage->amount = $amount;
+        $this->freeCommissionUsageStore->insert($usage);
     }
 
     public function calculate(): float
     {
-        return 1;
-        // TODO: Implement calculate() method.
+        if ($this->isCountOfFreeUsagesMoreThanAllowance() || $this->isSumOfFreeUsagesMoreThanAllowance()){
+            return $this->getOperationAmountInEuros() * .003;
+        }
+
+        if ($this->isSumOfFreeUsagesAndOperationAmountMoreThanAllowance()){
+            $this->insertFreeCommissionUsage(
+                $this->getOperationAmountInEuros()
+            );
+
+            return 0;
+        }
+        $sumOfThatCanUseFromFreeUsages = self::SUM_ALLOWANCE - $this->getSumUsage();
+
+        $this->insertFreeCommissionUsage($sumOfThatCanUseFromFreeUsages);
+
+        $mustCalculateCommissionAmount = $this->getOperationAmountInEuros() - $sumOfThatCanUseFromFreeUsages;
+
+        return $this->convertEuroToCurrentCurrency($mustCalculateCommissionAmount) * .003;
     }
 }

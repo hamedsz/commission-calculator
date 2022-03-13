@@ -2,8 +2,8 @@
 
 namespace Tests\Unit;
 
-use App\Entities\FreeCommissionUsageStore;
-use App\Entities\Operation;
+use App\Entities\DataStore\FreeCommissionUsageStore;
+use App\Entities\Operation\Operation;
 use App\Entities\Withdraw\BusinessWithdrawCommissionCalculator;
 use PHPUnit\Framework\TestCase;
 

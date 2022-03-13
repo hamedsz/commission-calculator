@@ -2,9 +2,8 @@
 
 namespace Tests\Unit;
 
-use App\Entities\FreeCommissionUsageStore;
-use App\Entities\Operation;
-use App\Entities\Withdraw\BusinessWithdrawCommissionCalculator;
+use App\Entities\DataStore\FreeCommissionUsageStore;
+use App\Entities\Operation\Operation;
 use App\Entities\Withdraw\PrivateWithdrawCommissionCalculator;
 use App\Helpers\Euro;
 use Tests\TestCase;

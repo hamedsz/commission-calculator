@@ -2,9 +2,9 @@
 
 namespace Tests\Unit;
 
+use App\Entities\DataStore\FreeCommissionUsageStore;
 use App\Entities\Deposit\NormalDepositCommissionCalculator;
-use App\Entities\FreeCommissionUsageStore;
-use App\Entities\Operation;
+use App\Entities\Operation\Operation;
 use PHPUnit\Framework\TestCase;
 
 class NormalDepositCommissionCalculatorTest extends TestCase

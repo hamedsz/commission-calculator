@@ -24,7 +24,7 @@ class CommissionCalculatorCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'calculate commission from csv file';
 
     /**
      * Create a new command instance.

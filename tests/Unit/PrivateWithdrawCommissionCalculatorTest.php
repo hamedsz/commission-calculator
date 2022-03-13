@@ -23,7 +23,7 @@ class PrivateWithdrawCommissionCalculatorTest extends TestCase
         $item->userID = 1;
         $data[] = [
             'operation'     => $item,
-            'result'        => 8607.390069,
+            'result'        => 8607.39,
             'currency_rate' => 130.869977
         ];
 
@@ -45,6 +45,7 @@ class PrivateWithdrawCommissionCalculatorTest extends TestCase
 
             //this code converts results to date currency rate because maybe they changed
             $amount = $item['result'] * Euro::getRate($item['operation']->currency) / $item['currency_rate'];
+            $amount = round($amount, 2);
 
             $this->assertEquals($amount, $obj->calculate());
         }

@@ -24,7 +24,7 @@ class NormalDepositCommissionCalculatorTest extends TestCase
 
             $obj = new NormalDepositCommissionCalculator($operation, $store);
 
-            $this->assertTrue($obj->calculate() == ($operation->amount * 0.0003));
+            $this->assertTrue($obj->calculate() == (round($operation->amount * 0.0003, 2)));
         }
     }
 

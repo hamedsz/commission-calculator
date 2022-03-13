@@ -10,4 +10,5 @@ class Operation
     public $type;
     public $amount;
     public $currency;
+    public $commission;
 }

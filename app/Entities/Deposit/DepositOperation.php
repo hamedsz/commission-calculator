@@ -12,16 +12,18 @@ class DepositOperation implements OperationCalculator
     /** @var CommissionCalculatorInterface */
     private $calculator;
     private $operation;
+    private $freeCommissionUsageStore;
 
     public function __construct(Operation $operation, FreeCommissionUsageStore $freeCommissionUsageStore)
     {
         $this->operation = $operation;
+        $this->freeCommissionUsageStore = $freeCommissionUsageStore;
     }
 
     public function initialize(){
         switch (true){
             default:
-                $this->calculator = new NormalDepositCommissionCalculator($this->operation);
+                $this->calculator = new NormalDepositCommissionCalculator($this->operation, $this->freeCommissionUsageStore);
         }
     }
 

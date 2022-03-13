@@ -62,7 +62,7 @@ class PrivateWithdrawCommissionCalculator implements CommissionCalculatorInterfa
     public function calculate(): float
     {
         if ($this->isCountOfFreeUsagesMoreThanAllowance() || $this->isSumOfFreeUsagesMoreThanAllowance()){
-            return $this->getOperationAmountInEuros() * .003;
+            return round($this->getOperationAmountInEuros() * .003, 2);
         }
 
         if ($this->isSumOfFreeUsagesAndOperationAmountMoreThanAllowance()){
@@ -78,6 +78,6 @@ class PrivateWithdrawCommissionCalculator implements CommissionCalculatorInterfa
 
         $mustCalculateCommissionAmount = $this->getOperationAmountInEuros() - $sumOfThatCanUseFromFreeUsages;
 
-        return $this->convertEuroToCurrentCurrency($mustCalculateCommissionAmount) * .003;
+        return round($this->convertEuroToCurrentCurrency($mustCalculateCommissionAmount) * .003, 2);
     }
 }

@@ -17,6 +17,6 @@ class BusinessWithdrawCommissionCalculator implements CommissionCalculatorInterf
 
     public function calculate(): float
     {
-        return $this->operation->amount * 0.005;
+        return round($this->operation->amount * 0.005, 2);
     }
 }

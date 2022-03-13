@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Entities\Application;
+use App\Entities\CSV\CsvReader;
 use App\Entities\FreeCommissionUsage;
 use App\Entities\FreeCommissionUsageStore;
 use App\Entities\Operation;
@@ -15,7 +17,7 @@ class CommissionCalculatorCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'commission:calculate';
+    protected $signature = 'commission:calculate {file}';
 
     /**
      * The console command description.
@@ -41,20 +43,11 @@ class CommissionCalculatorCommand extends Command
      */
     public function handle()
     {
-        $store = new FreeCommissionUsageStore();
+        $operations = Application::commission($this->argument('file'));
 
-        $operation = new Operation();
-        $operation->type = "withdraw";
-        $operation->userType = "private";
-        $operation->userID = 5;
-        $operation->date = "2016-02-19";
-        $operation->amount = 3000000;
-        $operation->currency = "JPY";
-        $calc = new \App\Entities\CommissionCalculator($operation, $store);
-
-        $commission = $calc->main();
-
-        $this->info($commission);
+        foreach ($operations as $operation){
+            $this->info($operation->commission);
+        }
 
         return 0;
     }

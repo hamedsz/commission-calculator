@@ -25,7 +25,7 @@ class BusinessWithdrawCommissionCalculatorTest extends TestCase
 
             $obj = new BusinessWithdrawCommissionCalculator($operation, $store);
 
-            $this->assertTrue($obj->calculate() == ($operation->amount * 0.005));
+            $this->assertTrue($obj->calculate() == (round($operation->amount * 0.005, 2)));
         }
     }
 

@@ -2,10 +2,10 @@
 
 namespace App\Entities\Deposit;
 
-use App\Entities\CommissionCalculatorInterface;
-use App\Entities\FreeCommissionUsageStore;
-use App\Entities\Operation;
-use App\Entities\OperationCalculator;
+use App\Entities\Interfaces\CommissionCalculatorInterface;
+use App\Entities\DataStore\FreeCommissionUsageStore;
+use App\Entities\Operation\Operation;
+use App\Entities\Interfaces\OperationCalculator;
 
 class DepositOperation implements OperationCalculator
 {
@@ -14,6 +14,11 @@ class DepositOperation implements OperationCalculator
     private $operation;
     private $freeCommissionUsageStore;
 
+    protected $userTypes = [
+        'private'  => NormalDepositCommissionCalculator::class,
+        'business' => NormalDepositCommissionCalculator::class
+    ];
+
     public function __construct(Operation $operation, FreeCommissionUsageStore $freeCommissionUsageStore)
     {
         $this->operation = $operation;
@@ -21,10 +26,13 @@ class DepositOperation implements OperationCalculator
     }
 
     public function initialize(){
-        switch (true){
-            default:
-                $this->calculator = new NormalDepositCommissionCalculator($this->operation, $this->freeCommissionUsageStore);
+        if (!isset($this->userTypes[$this->operation->userType])){
+            throw new \Exception("unexpected user type!");
         }
+
+        $operationClass = $this->userTypes[$this->operation->userType];
+
+        $this->calculator = new $operationClass($this->operation, $this->freeCommissionUsageStore);
     }
 
     public function main() : float{

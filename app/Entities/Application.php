@@ -3,6 +3,8 @@
 namespace App\Entities;
 
 use App\Entities\CSV\CsvReader;
+use App\Entities\DataStore\FreeCommissionUsageStore;
+use App\Entities\Operation\OperationTypeDetector;
 
 class Application
 {
@@ -29,7 +31,7 @@ class Application
 
     private function calculateCommission(){
         foreach ($this->operations as $operation){
-            $calc = new \App\Entities\CommissionCalculator($operation, $this->store);
+            $calc = new OperationTypeDetector($operation, $this->store);
 
             $operation->commission = $calc->main();
         }

@@ -2,10 +2,11 @@
 
 namespace App\Entities\Withdraw;
 
-use App\Entities\CommissionCalculatorInterface;
-use App\Entities\FreeCommissionUsageStore;
-use App\Entities\Operation;
-use App\Entities\OperationCalculator;
+
+use App\Entities\DataStore\FreeCommissionUsageStore;
+use App\Entities\Interfaces\CommissionCalculatorInterface;
+use App\Entities\Interfaces\OperationCalculator;
+use App\Entities\Operation\Operation;
 
 class WithdrawOperation implements OperationCalculator
 {
@@ -14,6 +15,12 @@ class WithdrawOperation implements OperationCalculator
     private $operation;
     private $freeCommissionUsageStore;
 
+
+    protected $userTypes = [
+        'private'  => PrivateWithdrawCommissionCalculator::class,
+        'business' => BusinessWithdrawCommissionCalculator::class
+    ];
+
     public function __construct(Operation $operation, FreeCommissionUsageStore $freeCommissionUsageStore)
     {
         $this->operation = $operation;
@@ -21,16 +28,13 @@ class WithdrawOperation implements OperationCalculator
     }
 
     public function initialize(){
-        switch ($this->operation->userType){
-            case "private":
-                $this->calculator = new PrivateWithdrawCommissionCalculator($this->operation, $this->freeCommissionUsageStore);
-                break;
-            case "business":
-                $this->calculator = new BusinessWithdrawCommissionCalculator($this->operation, $this->freeCommissionUsageStore);
-                break;
-            default:
-                throw new \Exception("unexpected user type! supported types: business, private");
+        if (!isset($this->userTypes[$this->operation->userType])){
+            throw new \Exception("unexpected user type!");
         }
+
+        $operationClass = $this->userTypes[$this->operation->userType];
+
+        $this->calculator = new $operationClass($this->operation, $this->freeCommissionUsageStore);
     }
 
     public function main() : float{

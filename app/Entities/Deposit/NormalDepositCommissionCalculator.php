@@ -2,9 +2,9 @@
 
 namespace App\Entities\Deposit;
 
-use App\Entities\CommissionCalculatorInterface;
-use App\Entities\FreeCommissionUsageStore;
-use App\Entities\Operation;
+use App\Entities\DataStore\FreeCommissionUsageStore;
+use App\Entities\Interfaces\CommissionCalculatorInterface;
+use App\Entities\Operation\Operation;
 
 class NormalDepositCommissionCalculator implements CommissionCalculatorInterface
 {

@@ -2,10 +2,10 @@
 
 namespace App\Entities\Withdraw;
 
-use App\Entities\CommissionCalculatorInterface;
-use App\Entities\FreeCommissionUsage;
-use App\Entities\FreeCommissionUsageStore;
-use App\Entities\Operation;
+use App\Entities\DataStore\FreeCommissionUsage;
+use App\Entities\DataStore\FreeCommissionUsageStore;
+use App\Entities\Interfaces\CommissionCalculatorInterface;
+use App\Entities\Operation\Operation;
 use App\Helpers\Euro;
 
 class PrivateWithdrawCommissionCalculator implements CommissionCalculatorInterface

@@ -1,6 +1,9 @@
 <?php
 
-namespace App\Entities;
+namespace App\Entities\Interfaces;
+
+use App\Entities\DataStore\FreeCommissionUsageStore;
+use App\Entities\Operation\Operation;
 
 interface CommissionCalculatorInterface
 {

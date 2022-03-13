@@ -2,7 +2,7 @@
 
 namespace App\Entities\CSV;
 
-use App\Entities\Operation;
+use App\Entities\Operation\Operation;
 use Illuminate\Support\Facades\Storage;
 
 class CsvReader
